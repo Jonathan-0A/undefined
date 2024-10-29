@@ -1,0 +1,43 @@
+:root {
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #666;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+body {
+  background-color: #121212;
+  color: #ccd7da;
+  font-family: 'Roboto', sans-serif;
+}
+.sender-msg-card {
+  background: #1e1e1e !important;
+  color: #ffffff !important;
+  margin-bottom: 5px;
+  max-width: 45%;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+a {
+  color: #bb86fc;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
