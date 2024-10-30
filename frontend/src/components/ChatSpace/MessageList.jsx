@@ -1,18 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import NoMessages from "../ChatSpace/NoMessages";
 import { Done, ScheduleSend } from '@mui/icons-material';
+import axios from "axios";
 
 const MessageList = ({ messages = [], user, sent }) => {
-  // useEffect(() => {
-  //   console.log("MessageList received messages:", messages);
-  // }, [messages]);
+  const [userData, setUserData] = useState({}); // State to store user data by user ID
+
+  const fetchUserData = async (userId) => {
+    if (!userId || userData[userId]) return; // Skip if already fetched
+    try {
+      const res = await axios.get(`/user/${userId}`);
+      setUserData(res.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch unique user data only for required IDs in messages
+    messages.forEach((msg) => {
+      const displayUserId = msg.senderId === user._id ? msg.receiverId : msg.senderId;
+      fetchUserData(displayUserId); // Fetch data for each unique user ID
+    });
+  }, [messages, user]);
 
   return (
     <Box sx={{ flexGrow: 1, overflowY: "auto", padding: 2, paddingBottom: 10 }}>
       {messages && messages.length > 0 ? (
         messages.map((msg, index) => {
           const isSender = msg.senderId === user._id;
+          const displayUserId = isSender ? msg.receiverId : msg.senderId;
+          const displayUser = userData || {};
 
           return (
             <Box
@@ -24,11 +43,12 @@ const MessageList = ({ messages = [], user, sent }) => {
                 justifyContent: isSender ? "flex-end" : "flex-start",
               }}
             >
-              {/* Receiver's Avatar */}
+              {/* Display Receiver's Avatar */}
               {!isSender && (
                 <Avatar
-                  src={msg.receiverAvatar || "https://i.pravatar.cc/150?img=3"}
+                  src={displayUser.avatarImage || "https://i.pravatar.cc/150?img=3"}
                   sx={{ width: 36, height: 36, marginRight: 1 }}
+                  alt={displayUser.name || "User"}
                 />
               )}
 
@@ -36,7 +56,7 @@ const MessageList = ({ messages = [], user, sent }) => {
                 sx={{
                   backgroundColor: isSender ? "#3968de" : "#2a2a2a",
                   color: "#ddf",
-                  padding: "4px 7px",
+                  padding: "3px 7px",
                   borderRadius: "9px",
                   maxWidth: "70%",
                   wordWrap: "break-word",
@@ -63,7 +83,6 @@ const MessageList = ({ messages = [], user, sent }) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "flex-end",
-                    marginTop: "5px",
                     gap: "5px",
                     color: "#b3b3b3",
                     fontSize: "12px",
